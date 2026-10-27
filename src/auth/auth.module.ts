@@ -6,7 +6,7 @@ import { UsersModule } from "../users/users.module";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { JwtStrategy } from "./strategies/jwt.strategy";
-import { FamiliesModule } from "src/families/families.module";
+import { FamiliesModule } from "../families/families.module";
 
 @Module({
   imports: [
@@ -18,7 +18,9 @@ import { FamiliesModule } from "src/families/families.module";
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>("JWT_SECRET", "dev_secret_change_me"),
-        signOptions: { expiresIn: config.get<string>("JWT_EXPIRES_IN", "7d") },
+        signOptions: {
+          expiresIn: config.get<string>("JWT_EXPIRES_IN", "7d") as any,
+        },
       }),
     }),
   ],
