@@ -8,23 +8,8 @@ import {
   CreateDateColumn,
 } from "typeorm";
 import { Task } from "../../tasks/entities/task.entity";
-import { Family } from "../../families/entities/family.entity";
-
-export enum FamilyRole {
-  PADRE = "padre",
-  MADRE = "madre",
-  HIJO = "hijo",
-  HIJA = "hija",
-  ABUELO = "abuelo",
-  ABUELA = "abuela",
-  TIO = "tio",
-  TIA = "tia",
-  OTRO = "otro",
-}
-
-export function isGuardianRole(role: FamilyRole): boolean {
-  return role === FamilyRole.PADRE || role === FamilyRole.MADRE;
-}
+import { Group } from "../../groups/entities/group.entity";
+import { GroupMember } from "../../groups/entities/group-member.entity";
 
 @Entity("users")
 export class User {
@@ -40,18 +25,18 @@ export class User {
   @Column({ name: "password_hash", type: "varchar" })
   passwordHash!: string;
 
-  @Column({ type: "enum", enum: FamilyRole, default: FamilyRole.OTRO })
-  role!: FamilyRole;
+  @ManyToOne(() => Group, { nullable: true, eager: false, onDelete: "SET NULL" })
+  @JoinColumn({ name: "active_group_id" })
+  activeGroup?: Group | null;
 
-  @ManyToOne(() => Family, (family) => family.members, { eager: false })
-  @JoinColumn({ name: "family_id" })
-  family!: Family;
-
-  @Column({ name: "family_id" })
-  familyId!: string;
+  @Column({ name: "active_group_id", type: "uuid", nullable: true })
+  activeGroupId!: string | null;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt!: Date;
+
+  @OneToMany(() => GroupMember, (membership) => membership.user)
+  memberships!: GroupMember[];
 
   @OneToMany(() => Task, (task) => task.assignedTo)
   assignedTasks!: Task[];

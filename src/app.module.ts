@@ -6,8 +6,10 @@ import { Task } from "./tasks/entities/task.entity";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
 import { TasksModule } from "./tasks/tasks.module";
-import { FamiliesModule } from "./families/families.module";
-import { Family } from "./families/entities/family.entity";
+import { GroupsModule } from "./groups/groups.module";
+import { Group } from "./groups/entities/group.entity";
+import { GroupRole } from "./groups/entities/group-role.entity";
+import { GroupMember } from "./groups/entities/group-member.entity";
 import { ChatModule } from "./chat/chat.module";
 import { Message } from "./chat/entities/message.entity";
 import { NotificationsModule } from "./notifications/notifications.module";
@@ -27,7 +29,15 @@ import { AppService } from "./app.service";
         username: config.get<string>("DB_USERNAME", "postgres"),
         password: config.get<string>("DB_PASSWORD", "postgres"),
         database: config.get<string>("DB_NAME", "tareas_familiares"),
-        entities: [User, Task, Family, Message, Notification],
+        entities: [
+          User,
+          Task,
+          Group,
+          GroupRole,
+          GroupMember,
+          Message,
+          Notification,
+        ],
         ssl:
           config.get<string>("DB_SSL") === "true"
             ? { rejectUnauthorized: false }
@@ -36,7 +46,7 @@ import { AppService } from "./app.service";
         logging: false,
       }),
     }),
-    FamiliesModule,
+    GroupsModule,
     ChatModule,
     NotificationsModule,
     AuthModule,

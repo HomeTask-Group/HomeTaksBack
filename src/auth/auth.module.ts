@@ -3,15 +3,15 @@ import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { UsersModule } from "../users/users.module";
+import { GroupsModule } from "../groups/groups.module";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { JwtStrategy } from "./strategies/jwt.strategy";
-import { FamiliesModule } from "../families/families.module";
 
 @Module({
   imports: [
     UsersModule,
-    FamiliesModule,
+    GroupsModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

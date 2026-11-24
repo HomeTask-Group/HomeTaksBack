@@ -7,7 +7,7 @@ import {
   CreateDateColumn,
 } from "typeorm";
 import { User } from "../../users/entities/user.entity";
-import { Family } from "../../families/entities/family.entity";
+import { Group } from "../../groups/entities/group.entity";
 
 export enum TaskPriority {
   BAJA = "baja",
@@ -40,26 +40,29 @@ export class Task {
   @Column({ type: "enum", enum: TaskStatus, default: TaskStatus.PENDIENTE })
   status!: TaskStatus;
 
-  @ManyToOne(() => User, (user) => user.assignedTasks, { eager: true })
+  @ManyToOne(() => User, (user) => user.assignedTasks, {
+    eager: true,
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "assigned_to_id" })
   assignedTo!: User;
 
-  @Column({ name: "assigned_to_id" })
+  @Column({ name: "assigned_to_id", type: "uuid" })
   assignedToId!: string;
 
-  @ManyToOne(() => User, { eager: false })
+  @ManyToOne(() => User, { eager: false, onDelete: "CASCADE" })
   @JoinColumn({ name: "created_by_id" })
   createdBy!: User;
 
-  @Column({ name: "created_by_id" })
+  @Column({ name: "created_by_id", type: "uuid" })
   createdById!: string;
 
-  @ManyToOne(() => Family, { eager: false })
-  @JoinColumn({ name: "family_id" })
-  family!: Family;
+  @ManyToOne(() => Group, { eager: true, onDelete: "CASCADE" })
+  @JoinColumn({ name: "group_id" })
+  group!: Group;
 
-  @Column({ name: "family_id" })
-  familyId!: string;
+  @Column({ name: "group_id", type: "uuid" })
+  groupId!: string;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt!: Date;

@@ -22,4 +22,8 @@ export class CreateTaskDto {
 
   @IsUUID("4", { message: "assignedToId debe ser un UUID válido" })
   assignedToId!: string;
+
+  @IsOptional()
+  @IsUUID("4", { message: "groupId debe ser un UUID válido" })
+  groupId?: string;
 }

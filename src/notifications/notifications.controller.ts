@@ -1,31 +1,48 @@
-import { Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import type { RequestUser } from '../auth/decorators/current-user.decorator';
-import { NotificationsService } from './notifications.service';
+import {
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import type { RequestUser } from "../auth/decorators/current-user.decorator";
+import { NotificationsService } from "./notifications.service";
 
 @UseGuards(JwtAuthGuard)
-@Controller('notifications')
+@Controller("notifications")
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Get()
-  getAll(@CurrentUser() user: RequestUser) {
-    return this.notificationsService.getAll(user.id);
+  getAll(
+    @CurrentUser() user: RequestUser,
+    @Query("groupId") groupId?: string,
+  ) {
+    return this.notificationsService.getAll(user.id, groupId);
   }
 
-  @Get('unread')
-  getUnread(@CurrentUser() user: RequestUser) {
-    return this.notificationsService.getUnread(user.id);
+  @Get("unread")
+  getUnread(
+    @CurrentUser() user: RequestUser,
+    @Query("groupId") groupId?: string,
+  ) {
+    return this.notificationsService.getUnread(user.id, groupId);
   }
 
-  @Patch(':id/read')
-  markAsRead(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+  @Patch(":id/read")
+  markAsRead(@Param("id") id: string, @CurrentUser() user: RequestUser) {
     return this.notificationsService.markAsRead(id, user.id);
   }
 
-  @Post('read-all')
-  markAllAsRead(@CurrentUser() user: RequestUser) {
-    return this.notificationsService.markAllAsRead(user.id);
+  @Post("read-all")
+  markAllAsRead(
+    @CurrentUser() user: RequestUser,
+    @Query("groupId") groupId?: string,
+  ) {
+    return this.notificationsService.markAllAsRead(user.id, groupId);
   }
 }

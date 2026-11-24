@@ -2,13 +2,17 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
   MinLength,
-  ValidateIf,
 } from "class-validator";
-import { FamilyRole } from "../../users/entities/user.entity";
+import { GroupType } from "../../groups/entities/group.entity";
 
 export class RegisterDto {
   @IsNotEmpty({ message: "El nombre es obligatorio" })
+  @IsString()
   name!: string;
 
   @IsEmail({}, { message: "Correo no válido" })
@@ -17,16 +21,27 @@ export class RegisterDto {
   @MinLength(6, { message: "La contraseña debe tener al menos 6 caracteres" })
   password!: string;
 
-  @IsEnum(FamilyRole, { message: "Rol familiar no válido" })
-  role!: FamilyRole;
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  groupName?: string;
 
-  @ValidateIf((o) => !o.inviteCode)
-  @IsNotEmpty({
-    message: "familyName es obligatorio si no envías un inviteCode",
+  @IsOptional()
+  @IsEnum(GroupType, {
+    message: "Tipo de grupo no válido (family, roommates, couple, custom)",
   })
-  familyName?: string;
+  groupType?: GroupType;
 
-  @ValidateIf((o) => !o.familyName)
-  @IsNotEmpty({ message: "inviteCode es obligatorio si no envías familyName" })
+  @IsOptional()
+  @IsString()
   inviteCode?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(60)
+  roleName?: string;
+
+  @IsOptional()
+  @IsUUID("4", { message: "roleId debe ser un UUID válido" })
+  roleId?: string;
 }

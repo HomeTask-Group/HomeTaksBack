@@ -5,32 +5,32 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
-} from 'typeorm';
-import { User } from '../../users/entities/user.entity';
-import { Family } from '../../families/entities/family.entity';
+} from "typeorm";
+import { User } from "../../users/entities/user.entity";
+import { Group } from "../../groups/entities/group.entity";
 
-@Entity('messages')
+@Entity("messages")
 export class Message {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: "text" })
   content!: string;
 
-  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'sender_id' })
+  @ManyToOne(() => User, { eager: true, onDelete: "CASCADE" })
+  @JoinColumn({ name: "sender_id" })
   sender!: User;
 
-  @Column({ name: 'sender_id' })
+  @Column({ name: "sender_id", type: "uuid" })
   senderId!: string;
 
-  @ManyToOne(() => Family, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'family_id' })
-  family!: Family;
+  @ManyToOne(() => Group, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "group_id" })
+  group!: Group;
 
-  @Column({ name: 'family_id' })
-  familyId!: string;
+  @Column({ name: "group_id", type: "uuid" })
+  groupId!: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt!: Date;
 }

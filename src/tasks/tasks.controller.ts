@@ -15,6 +15,7 @@ import type { RequestUser } from "../auth/decorators/current-user.decorator";
 import { TasksService } from "./tasks.service";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
+import { TaskStatus } from "./entities/task.entity";
 
 @Controller("tasks")
 @UseGuards(JwtAuthGuard)
@@ -27,18 +28,84 @@ export class TasksController {
   }
 
   @Get()
-  findAll(@CurrentUser() user: RequestUser) {
-    return this.tasksService.findAll(user);
+  findAll(
+    @CurrentUser() user: RequestUser,
+    @Query("groupId") groupId?: string,
+    @Query("day") day?: string,
+    @Query("status") status?: TaskStatus,
+    @Query("assignedToId") assignedToId?: string,
+  ) {
+    return this.tasksService.findAllByGroup(user, groupId, {
+      day,
+      status,
+      assignedToId,
+    });
+  }
+
+  @Get("my/all")
+  findMyTasksAcrossAllGroups(
+    @CurrentUser() user: RequestUser,
+    @Query("day") day?: string,
+    @Query("status") status?: TaskStatus,
+  ) {
+    return this.tasksService.findMyTasksAcrossAllGroups(user, { day, status });
+  }
+
+  @Get("all-groups")
+  findMyTasksAcrossAllGroupsAlias(
+    @CurrentUser() user: RequestUser,
+    @Query("day") day?: string,
+    @Query("status") status?: TaskStatus,
+  ) {
+    return this.tasksService.findMyTasksAcrossAllGroups(user, { day, status });
+  }
+
+  @Get("my")
+  findMyTasksInActiveOrSpecifiedGroup(
+    @CurrentUser() user: RequestUser,
+    @Query("groupId") groupId?: string,
+    @Query("day") day?: string,
+    @Query("status") status?: TaskStatus,
+  ) {
+    return this.tasksService.findMyTasksByGroup(user, groupId, { day, status });
+  }
+
+  @Get("my/group/:groupId")
+  findMyTasksByGroupParam(
+    @Param("groupId") groupId: string,
+    @CurrentUser() user: RequestUser,
+    @Query("day") day?: string,
+    @Query("status") status?: TaskStatus,
+  ) {
+    return this.tasksService.findMyTasksByGroup(user, groupId, { day, status });
+  }
+
+  @Get("group/:groupId")
+  findAllByGroupParam(
+    @Param("groupId") groupId: string,
+    @CurrentUser() user: RequestUser,
+    @Query("day") day?: string,
+    @Query("status") status?: TaskStatus,
+    @Query("assignedToId") assignedToId?: string,
+  ) {
+    return this.tasksService.findAllByGroup(user, groupId, {
+      day,
+      status,
+      assignedToId,
+    });
   }
 
   @Get("user/:userId")
   findByUser(
     @Param("userId") userId: string,
     @Query("day") day: string | undefined,
+    @Query("groupId") groupId: string | undefined,
     @CurrentUser() user: RequestUser,
   ) {
-    if (day) return this.tasksService.findByUserAndDay(userId, day, user);
-    return this.tasksService.findByUser(userId, user);
+    if (day) {
+      return this.tasksService.findByUserAndDay(userId, day, user, groupId);
+    }
+    return this.tasksService.findByUser(userId, user, groupId);
   }
 
   @Patch(":id")
